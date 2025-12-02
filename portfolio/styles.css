@@ -14,7 +14,7 @@ header {
 }
 
 header .logo {
-  width: 100px;
+  width: 600px;
   height: auto;
   margin-bottom: 10px;
 }
@@ -129,4 +129,55 @@ button {
 
 button:hover {
   background-color: gray;
+}
+/* Testimony Section */
+.testimony-section {
+    width: 100%;
+    max-width: 100%;
+    padding: 20px 0;
+    background: #222;
+    color: #fff;
+    text-align: center;
+    overflow-x: hidden; /* Hide overflow, so only one testimony is visible at a time */
+}
+
+.testimony-content {
+    display: flex; /* Align testimonies in a row */
+    gap: 40px;
+    transition: transform 0.5s ease-in-out; /* Smooth transition for sliding testimonies */
+}
+
+.testimony-item {
+    flex-shrink: 0; /* Prevent testimony items from shrinking */
+    width: 100%; /* Take up the full width of the container */
+    max-width: 400px; /* Maximum width for each testimony */
+    background: #333;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.testimony-text {
+    font-size: 16px;
+    font-style: italic;
+    margin-bottom: 10px;
+}
+
+.author-name {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Scrollbar styling */
+.testimony-section::-webkit-scrollbar {
+    height: 8px;
+}
+
+.testimony-section::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 8px;
+}
+
+.testimony-section::-webkit-scrollbar-track {
+    background: #222;
 }
