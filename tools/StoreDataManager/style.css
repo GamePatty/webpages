@@ -1,0 +1,46 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    padding: 20px;
+}
+
+section {
+    background: #ffffff;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+}
+
+h1, h2 {
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 6px 12px;
+    margin: 5px 5px 5px 0;
+    cursor: pointer;
+}
+
+.row {
+    margin-bottom: 8px;
+}
+
+input, select {
+    width: 220px;
+    padding: 4px;
+}
+
+.inline select {
+    width: 70px;
+    margin-right: 4px;
+}
+
+.array {
+    margin-left: 20px;
+}
+
+.product, .offer {
+    border: 1px solid #ddd;
+    padding: 12px;
+    margin-top: 10px;
+}
