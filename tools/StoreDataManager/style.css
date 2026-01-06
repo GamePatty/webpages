@@ -1,0 +1,168 @@
+:root {
+    --bg:#f1f3f6;
+    --panel:#ffffff;
+    --text:#222;
+    --border:#d1d5db;
+    --top:#1f2937;
+
+    --item:#e0f2fe;
+    --bundle:#ede9fe;
+    --offer:#fff7ed;
+}
+
+body.dark {
+    --bg:#0f172a;
+    --panel:#111827;
+    --text:#e5e7eb;
+    --border:#374151;
+    --top:#020617;
+
+    --item:#1e40af;
+    --bundle:#5b21b6;
+    --offer:#78350f;
+}
+
+* { box-sizing:border-box; }
+
+body {
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+}
+
+/* ---------- Topbar ---------- */
+
+.topbar {
+    background:var(--top);
+    color:#fff;
+    padding:14px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+/* ---------- Layout ---------- */
+
+main {
+    max-width:1100px;
+    margin:auto;
+    padding:20px;
+}
+
+.panel {
+    background:var(--panel);
+    border-radius:8px;
+    padding:16px;
+    margin-bottom:20px;
+}
+
+.panel-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.stack > * + * { margin-top:12px; }
+
+/* ---------- Cards ---------- */
+
+.product,
+.offer {
+    border-radius:6px;
+    border:1px solid var(--border);
+    overflow:hidden;
+}
+
+.product.item { background:var(--item); }
+.product.bundle { background:var(--bundle); }
+.offer { background:var(--offer); }
+
+/* ---------- Card Header ---------- */
+
+.card-header {
+    padding:10px 14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-weight:bold;
+    cursor:pointer;
+    user-select:none;
+}
+
+.card-header .chevron {
+    font-size:12px;
+    opacity:.7;
+}
+
+/* ---------- Card Body ---------- */
+
+.card-body {
+    background:var(--panel);
+    padding:14px;
+    position:relative;
+}
+
+.card.collapsed .card-body {
+    display:none;
+}
+
+/* ---------- Actions ---------- */
+
+.card-actions {
+    position:absolute;
+    top:14px;
+    right:14px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+/* ---------- Rows ---------- */
+
+.row {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:8px;
+}
+
+.row b { width:170px; }
+
+/* ---------- Inputs ---------- */
+
+input, select {
+    padding:6px 8px;
+    border-radius:4px;
+    border:1px solid var(--border);
+    min-width:220px;
+}
+
+/* ---------- Date ---------- */
+
+.date-inline select {
+    width:70px;
+    margin-right:6px;
+}
+
+/* ---------- Buttons ---------- */
+
+button, .secondary {
+    border:none;
+    border-radius:4px;
+    padding:6px 10px;
+    cursor:pointer;
+}
+
+.primary { background:#2563eb; color:#fff; }
+.secondary { background:#e5e7eb; }
+.danger { background:#dc2626; color:#fff; }
+
+/* ---------- Footer ---------- */
+
+footer {
+    text-align:center;
+    font-size:12px;
+    padding:10px;
+    opacity:.6;
+}
