@@ -1,46 +1,149 @@
+* { box-sizing: border-box; }
+
 body {
-    font-family: Arial, sans-serif;
-    background: #f4f4f4;
+    margin: 0;
+    font-family: Inter, Arial, sans-serif;
+    background: #f1f3f6;
+    color: #222;
+}
+
+/* ---------- Top Bar ---------- */
+
+.topbar {
+    background: #1f2937;
+    color: #fff;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.topbar h1 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.topbar span {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.toolbar {
+    display: flex;
+    gap: 10px;
+}
+
+/* ---------- Layout ---------- */
+
+main {
+    max-width: 1100px;
+    margin: auto;
     padding: 20px;
 }
 
-section {
-    background: #ffffff;
-    padding: 15px;
+.panel {
+    background: #fff;
+    border-radius: 8px;
+    padding: 16px;
     margin-bottom: 20px;
-    border: 1px solid #ccc;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-h1, h2 {
-    margin-bottom: 10px;
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
 }
 
-button {
-    padding: 6px 12px;
-    margin: 5px 5px 5px 0;
-    cursor: pointer;
+.stack > * + * {
+    margin-top: 12px;
 }
+
+/* ---------- Cards ---------- */
+
+.product, .offer {
+    position: relative;
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 14px 120px 14px 14px;
+}
+
+/* ---------- Action Buttons (Right Side) ---------- */
+
+.card-actions {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* ---------- Rows ---------- */
 
 .row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     margin-bottom: 8px;
 }
 
+.row b {
+    min-width: 140px;
+}
+
+/* ---------- Inputs ---------- */
+
 input, select {
-    width: 220px;
-    padding: 4px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    min-width: 220px;
 }
 
 .inline select {
     width: 70px;
-    margin-right: 4px;
 }
+
+/* ---------- Arrays ---------- */
 
 .array {
-    margin-left: 20px;
+    margin-left: 150px;
 }
 
-.product, .offer {
-    border: 1px solid #ddd;
-    padding: 12px;
-    margin-top: 10px;
+.array > div {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+/* ---------- Buttons ---------- */
+
+button, .secondary {
+    border: none;
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.primary { background: #2563eb; color: #fff; }
+.success { background: #16a34a; color: #fff; }
+.danger  { background: #dc2626; color: #fff; }
+.secondary {
+    background: #e5e7eb;
+    color: #111;
+}
+
+button:hover, .secondary:hover { opacity: 0.9; }
+
+/* ---------- Footer ---------- */
+
+footer {
+    text-align: center;
+    font-size: 12px;
+    color: #666;
+    padding: 10px;
 }

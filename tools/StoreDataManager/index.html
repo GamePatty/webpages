@@ -2,27 +2,50 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Store Product & Offer Editor</title>
+    <title>Store Config Editor</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>Store Config Editor</h1>
+<header class="topbar">
+    <div class="title">
+        <h1>🛒 Store Config Editor</h1>
+        <span>Items • Bundles • Offers</span>
+    </div>
 
-<section>
-    <h2>Products</h2>
-    <button id="addProductBtn">➕ Add Product</button>
-    <div id="products"></div>
+    <div class="toolbar">
+        <label class="secondary">
+            📥 Import JSON
+            <input type="file" id="importInput" accept=".json" hidden>
+        </label>
+        <button id="exportBtn" class="success">📤 Export JSON</button>
+    </div>
+</header>
+
+<main>
+
+<section class="panel">
+    <div class="panel-header">
+        <h2>Products</h2>
+        <button id="addProductBtn" class="primary">➕ Add Product</button>
+    </div>
+    <div id="products" class="stack"></div>
 </section>
 
-<section>
-    <h2>Offers</h2>
-    <button id="addOfferBtn">➕ Add Offer</button>
-    <div id="offers"></div>
+<section class="panel">
+    <div class="panel-header">
+        <h2>Offers</h2>
+        <button id="addOfferBtn" class="primary">➕ Add Offer</button>
+    </div>
+    <div id="offers" class="stack"></div>
 </section>
 
-<button id="exportBtn">📤 Export JSON</button>
+</main>
+
+<footer>
+    Internal Tool • GamePatty
+</footer>
 
 <script src="app.js"></script>
 </body>
