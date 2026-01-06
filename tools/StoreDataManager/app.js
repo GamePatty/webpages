@@ -1,44 +1,84 @@
-const productsDiv = document.getElementById("products");
-const offersDiv = document.getElementById("offers");
+/* =========================================================
+   DOM REFERENCES
+========================================================= */
 
-document.getElementById("addProductBtn").onclick = () => addProduct();
-document.getElementById("addOfferBtn").onclick = () => addOffer();
+const bundlesDiv = document.getElementById("bundles");
+const itemsDiv   = document.getElementById("items");
+const offersDiv  = document.getElementById("offers");
+
+document.getElementById("addBundleBtn").onclick = () => addProduct("Bundle");
+document.getElementById("addItemBtn").onclick   = () => addProduct("Item");
+document.getElementById("addOfferBtn").onclick  = () => addOffer();
+
 document.getElementById("exportBtn").onclick = exportJSON;
-document.getElementById("importInput").onchange = importJSON;
 
-/* ================= UTIL ================= */
+document.getElementById("collapseAllBtn").onclick = () => {
+    document.querySelectorAll(".card").forEach(c => c.classList.add("collapsed"));
+};
 
-function getItemIDs() {
-    return [...productsDiv.querySelectorAll(".itemid")].map(i => i.value);
+document.getElementById("expandAllBtn").onclick = () => {
+    document.querySelectorAll(".card").forEach(c => c.classList.remove("collapsed"));
+};
+
+document.getElementById("themeToggle").onclick = toggleTheme;
+
+/* =========================================================
+   THEME
+========================================================= */
+
+if (localStorage.theme === "dark") {
+    document.body.classList.add("dark");
 }
 
-function uniqueItemID(base) {
-    let i = 1, id = base;
-    while (getItemIDs().includes(id)) {
-        id = `${base}_copy${i++}`;
+function toggleTheme() {
+    document.body.classList.toggle("dark");
+    localStorage.theme = document.body.classList.contains("dark") ? "dark" : "light";
+}
+
+/* =========================================================
+   UTIL
+========================================================= */
+
+function getAllItemIDs() {
+    return [...document.querySelectorAll(".itemid")]
+        .map(i => i.value)
+        .filter(Boolean);
+}
+
+function uniqueID(base) {
+    let i = 1;
+    let id = base;
+    const ids = getAllItemIDs();
+
+    while (ids.includes(id)) {
+        id = `${base}_${i++}`;
     }
     return id;
 }
 
-function refreshOfferDropdowns() {
-    offersDiv.querySelectorAll(".offer").forEach(fillOfferProducts);
-}
+/* =========================================================
+   ARRAY UI
+========================================================= */
 
-/* ================= ARRAY ================= */
-
-function arrayField(label, type, values = []) {
+function createArray(label, type, values = []) {
     const wrap = document.createElement("div");
-    wrap.innerHTML = `<b>${label}:</b>`;
-    const list = document.createElement("div");
-    list.className = "array";
+    wrap.className = "array-block";
 
+    const head = document.createElement("div");
+    head.className = "array-header";
+    head.innerHTML = `<span>${label}</span>`;
+
+    const add = document.createElement("button");
+    add.textContent = "➕";
+    head.appendChild(add);
+
+    const list = document.createElement("div");
+    list.className = "array-items";
+
+    add.onclick = () => addArrayItem(list, type, "");
     values.forEach(v => addArrayItem(list, type, v));
 
-    const btn = document.createElement("button");
-    btn.textContent = "➕ Add";
-    btn.onclick = () => addArrayItem(list, type, "");
-
-    wrap.append(list, btn);
+    wrap.append(head, list);
     return wrap;
 }
 
@@ -49,197 +89,267 @@ function addArrayItem(list, type, value) {
     list.appendChild(row);
 }
 
-function readArray(container, isNumber) {
-    const vals = [...container.querySelectorAll("input")]
-        .map(i => isNumber ? Number(i.value) : i.value)
-        .filter(v => v !== "" && !Number.isNaN(v));
-    return vals.length ? vals : -4.0;
-}
+/* =========================================================
+   PRODUCT
+========================================================= */
 
-/* ================= PRODUCTS ================= */
+function addProduct(type, data = {}) {
+    const card = document.createElement("div");
+    card.className = `product ${type.toLowerCase()} card`;
 
-function addProduct(data = {}) {
-    const p = document.createElement("div");
-    p.className = "product";
-
-    p.innerHTML = `
-        <div class="card-actions">
-            <button class="secondary">📄 Duplicate</button>
-            <button class="danger">❌ Remove</button>
+    card.innerHTML = `
+        <div class="card-header">
+            <div class="title"></div>
+            <div class="chevron">▾</div>
         </div>
 
-        <div class="row"><b>StoreProductType:</b>
-            <select><option>Item</option><option>Bundle</option></select>
+        <div class="card-body">
+            <div class="card-actions">
+                <button class="secondary">📄</button>
+                <button class="danger">❌</button>
+            </div>
+
+            <div class="row"><b>ItemID:</b><input class="itemid"></div>
+            <div class="row"><b>ProductID:</b><input></div>
+            <div class="row"><b>Title:</b><input></div>
+            <div class="row"><b>Desc:</b><input></div>
+            <div class="row"><b>Price:</b><input type="number"></div>
         </div>
-        <div class="row"><b>ItemID:</b> <input class="itemid"></div>
-        <div class="row"><b>ProductID:</b> <input></div>
-        <div class="row"><b>Title:</b> <input></div>
-        <div class="row"><b>Desc:</b> <input></div>
-        <div class="row"><b>Price:</b> <input type="number" step="any"></div>
     `;
 
-    const i = p.querySelectorAll("input, select");
-    i[0].value = data.StoreProductType || "Item";
-    i[1].value = data.ItemID || uniqueItemID("item");
-    i[2].value = data.ProductID || "";
-    i[3].value = data.Title || "";
-    i[4].value = data.Desc || "";
-    i[5].value = data.Price || 0;
-    i[1].oninput = refreshOfferDropdowns;
+    const inputs = card.querySelectorAll("input");
+    inputs[0].value = data.ItemID || uniqueID(type.toLowerCase());
+    inputs[1].value = data.ProductID || "";
+    inputs[2].value = data.Title || "";
+    inputs[3].value = data.Desc || "";
+    inputs[4].value = data.Price || 0;
 
-    const ge = arrayField("GiftEvents (string)", "text", data.GiftEvents || []);
-    const gp = arrayField("GiftPowers (real)", "number", data.GiftPowers || []);
-    const gc = arrayField("GiftCurrencys (real)", "number", data.GiftCurrencys || []);
+    const updateTitle = () => {
+        card.querySelector(".title").textContent =
+            `${inputs[0].value} (${inputs[1].value})`;
+    };
 
-    p.append(ge, gp, gc);
+    inputs[0].oninput = updateTitle;
+    inputs[1].oninput = updateTitle;
+    updateTitle();
 
-    const [dup, rm] = p.querySelectorAll(".card-actions button");
+    card.querySelector(".card-header").onclick = () => {
+        card.classList.toggle("collapsed");
+    };
 
-    dup.onclick = () => addProduct({
-        StoreProductType: i[0].value,
-        ItemID: uniqueItemID(i[1].value),
-        ProductID: i[2].value,
-        Title: i[3].value,
-        Desc: i[4].value,
-        Price: i[5].value,
-        GiftEvents: readArray(ge, false) === -4.0 ? [] : readArray(ge, false),
-        GiftPowers: readArray(gp, true) === -4.0 ? [] : readArray(gp, true),
-        GiftCurrencys: readArray(gc, true) === -4.0 ? [] : readArray(gc, true)
+    const ge = createArray("GiftEvents", "text", data.GiftEvents || []);
+    const gp = createArray("GiftPowers", "number", data.GiftPowers || []);
+    const gc = createArray("GiftCurrencys", "number", data.GiftCurrencys || []);
+
+    card.querySelector(".card-body").append(ge, gp, gc);
+
+    const [dup, rm] = card.querySelectorAll(".card-actions button");
+
+    dup.onclick = () => addProduct(type, {
+        ItemID: uniqueID(inputs[0].value),
+        ProductID: inputs[1].value,
+        Title: inputs[2].value,
+        Desc: inputs[3].value,
+        Price: inputs[4].value,
+        GiftEvents: [...ge.querySelectorAll("input")].map(i => i.value),
+        GiftPowers: [...gp.querySelectorAll("input")].map(i => +i.value),
+        GiftCurrencys: [...gc.querySelectorAll("input")].map(i => +i.value)
     });
 
-    rm.onclick = () => { p.remove(); refreshOfferDropdowns(); };
+    rm.onclick = () => card.remove();
 
-    productsDiv.appendChild(p);
-    refreshOfferDropdowns();
+    if (type === "Bundle") {
+        bundlesDiv.appendChild(card);
+    } else {
+        itemsDiv.appendChild(card);
+    }
 }
 
-/* ================= OFFERS ================= */
+/* =========================================================
+   OFFER
+========================================================= */
 
-function dateDropdown(values = {}) {
-    const wrap = document.createElement("div");
-    wrap.className = "inline";
+function createDate() {
+    const d = document.createElement("div");
+    d.className = "date-inline";
 
-    const make = arr => {
+    const makeSelect = (max) => {
         const s = document.createElement("select");
-        arr.forEach(v => {
-            const o = document.createElement("option");
-            o.value = v;
-            o.textContent = v;
-            s.appendChild(o);
-        });
+        s.add(new Option(-1, -1));
+        for (let i = 1; i <= max; i++) {
+            s.add(new Option(i, i));
+        }
         return s;
     };
 
-    const day = make([-1, ...Array.from({ length: 31 }, (_, i) => i + 1)]);
-    const month = make([-1, ...Array.from({ length: 12 }, (_, i) => i + 1)]);
-    const year = make([-1, ...Array.from({ length: 20 }, (_, i) => 2024 + i)]);
-
-    day.value = values.day ?? -1;
-    month.value = values.month ?? -1;
-    year.value = values.year ?? -1;
-
-    wrap.append(day, month, year);
-    return wrap;
-}
-
-function fillOfferProducts(o) {
-    const ids = getItemIDs();
-    o.querySelectorAll(".np,.op").forEach(sel => {
-        const prev = sel.value;
-        sel.innerHTML = "";
-        ids.forEach(id => sel.add(new Option(id, id)));
-        if (ids.includes(prev)) sel.value = prev;
-    });
+    d.append(makeSelect(31), makeSelect(12), makeSelect(50));
+    return d;
 }
 
 function addOffer(data = {}) {
-    const o = document.createElement("div");
-    o.className = "offer";
+    const card = document.createElement("div");
+    card.className = "offer card";
 
-    o.innerHTML = `
-        <div class="card-actions">
-            <button class="secondary">📄 Duplicate</button>
-            <button class="danger">❌ Remove</button>
+    card.innerHTML = `
+        <div class="card-header">
+            <div class="title">Offer</div>
+            <div class="chevron">▾</div>
         </div>
 
-        <div class="row"><b>Normal Product:</b> <select class="np"></select></div>
-        <div class="row"><b>Offer Product:</b> <select class="op"></select></div>
-        <div class="row"><b>Offer Type:</b>
-            <select class="otype"><option>Manual</option><option>TimeBased</option></select>
+        <div class="card-body">
+            <div class="card-actions">
+                <button class="secondary">📄</button>
+                <button class="danger">❌</button>
+            </div>
+
+            <div class="row"><b>Base Item:</b><select class="base"></select></div>
+            <div class="row"><b>Offer Item:</b><select class="offerItem"></select></div>
+
+            <div class="row"><b>Offer Type:</b>
+                <select class="offerType">
+                    <option>Manual</option>
+                    <option>TimeBased</option>
+                </select>
+            </div>
+
+            <div class="row manual"><b>Active:</b>
+                <select class="active">
+                    <option>false</option>
+                    <option>true</option>
+                </select>
+            </div>
+
+            <div class="row time" style="display:none"><b>Start Date:</b></div>
+            <div class="row time" style="display:none"><b>End Date:</b></div>
         </div>
-        <div class="row manual"><b>Active:</b>
-            <select class="active"><option>false</option><option>true</option></select>
-        </div>
-        <div class="row time" style="display:none"><b>Start Date:</b></div>
-        <div class="row time" style="display:none"><b>End Date:</b></div>
     `;
 
-    const typeSel = o.querySelector(".otype");
-    typeSel.onchange = () => toggleOffer(typeSel);
+    const baseSel  = card.querySelector(".base");
+    const offerSel = card.querySelector(".offerItem");
 
-    o.querySelectorAll(".row.time")[0].appendChild(dateDropdown(data.StartDate));
-    o.querySelectorAll(".row.time")[1].appendChild(dateDropdown(data.EndDate));
+    getAllItemIDs().forEach(id => {
+        baseSel.add(new Option(id, id));
+        offerSel.add(new Option(id, id));
+    });
 
-    const [dup, rm] = o.querySelectorAll(".card-actions button");
-    dup.onclick = () => addOffer(data);
-    rm.onclick = () => o.remove();
+    const typeSel = card.querySelector(".offerType");
+    const activeSel = card.querySelector(".active");
 
-    offersDiv.appendChild(o);
-    fillOfferProducts(o);
+    typeSel.onchange = () => {
+        const isTime = typeSel.value === "TimeBased";
+        card.querySelectorAll(".manual").forEach(r => r.style.display = isTime ? "none" : "flex");
+        card.querySelectorAll(".time").forEach(r => r.style.display = isTime ? "flex" : "none");
+    };
+    typeSel.onchange();
+
+    card.querySelectorAll(".time")[0].appendChild(createDate());
+    card.querySelectorAll(".time")[1].appendChild(createDate());
+
+    const updateTitle = () => {
+        card.querySelector(".title").textContent =
+            `Offer: ${baseSel.value} → ${offerSel.value}`;
+    };
+
+    baseSel.onchange = updateTitle;
+    offerSel.onchange = updateTitle;
+    updateTitle();
+
+    card.querySelector(".card-header").onclick = () => {
+        card.classList.toggle("collapsed");
+    };
+
+    const [dup, rm] = card.querySelectorAll(".card-actions button");
+    dup.onclick = () => addOffer({
+        itemID: baseSel.value,
+        offerItemID: offerSel.value,
+        offerType: typeSel.value === "Manual" ? 0 : 2,
+        active: activeSel.value === "true"
+    });
+    rm.onclick = () => card.remove();
+
+    offersDiv.appendChild(card);
 }
 
-/* ================= IMPORT / EXPORT ================= */
+/* =========================================================
+   EXPORT (WORKING)
+========================================================= */
 
 function exportJSON() {
-    const result = { items:{}, bundles:{}, offers:{} };
+    const output = { items: {}, bundles: {}, offers: {} };
 
-    productsDiv.querySelectorAll(".product").forEach(p => {
-        const i = p.querySelectorAll("input, select");
-        const a = p.querySelectorAll(".array");
+    document.querySelectorAll(".product.card").forEach(card => {
+        const inputs = card.querySelectorAll("input");
+        const arrays = card.querySelectorAll(".array-block");
+
+        const gift = {
+            events: arrays[0].querySelectorAll("input").length
+                ? [...arrays[0].querySelectorAll("input")].map(i => i.value)
+                : -4.0,
+            powers: arrays[1].querySelectorAll("input").length
+                ? [...arrays[1].querySelectorAll("input")].map(i => +i.value)
+                : -4.0,
+            currencys: arrays[2].querySelectorAll("input").length
+                ? [...arrays[2].querySelectorAll("input")].map(i => +i.value)
+                : -4.0
+        };
 
         const obj = {
-            ProductID: i[2].value,
-            ItemID: i[1].value,
-            Gift: {
-                powers: readArray(a[1], true),
-                currencys: readArray(a[2], true),
-                events: readArray(a[0], false)
-            },
-            IsConsumable: i[0].value === "Item",
-            Price: Number(i[5].value),
-            Desc: i[4].value,
-            Title: i[3].value
+            ProductID: inputs[1].value,
+            ItemID: inputs[0].value,
+            Gift: gift,
+            IsConsumable: card.classList.contains("item"),
+            Price: +inputs[4].value,
+            Desc: inputs[3].value,
+            Title: inputs[2].value
         };
 
-        (i[0].value === "Item" ? result.items : result.bundles)[obj.ItemID] = obj;
+        if (card.classList.contains("item")) {
+            output.items[obj.ItemID] = obj;
+        } else {
+            output.bundles[obj.ItemID] = obj;
+        }
     });
 
-    offersDiv.querySelectorAll(".offer").forEach(o => {
-        const s = o.querySelectorAll("select");
-        result.offers[s[0].value  + "_offer"] = {
-            itemID: s[0].value,
-            offerItemID: s[1].value,
+    document.querySelectorAll(".offer.card").forEach(card => {
+        const base = card.querySelector(".base").value;
+        const offer = card.querySelector(".offerItem").value;
+        const type = card.querySelector(".offerType").value;
+        const active = card.querySelector(".active").value === "true";
+
+        const dates = card.querySelectorAll(".date-inline select");
+
+        const start = {
+            day: +dates[0].value,
+            month: +dates[1].value,
+            year: +dates[2].value,
+            hour: 0, minute: 0, second: 0
+        };
+
+        const end = {
+            day: +dates[3].value,
+            month: +dates[4].value,
+            year: +dates[5].value,
+            hour: 0, minute: 0, second: 0
+        };
+
+        output.offers[base] = {
+            itemID: base,
+            offerItemID: offer,
             type: 1,
-            offerType: s[2].value === "Manual" ? 0 : 2,
-            offerData: [
-                { day:+s[4].value, month:+s[5].value, year:+s[6].value, hour:0, minute:0, second:0 },
-                { day:+s[7].value, month:+s[8].value, year:+s[9].value, hour:0, minute:0, second:0 }
-            ]
+            offerType: type === "Manual" ? 0 : 2,
+            active: active,
+            offerData: type === "TimeBased" ? [start, end] : []
         };
     });
 
-    downloadJSON(result);
-}
-
-function importJSON(e) {
-    const reader = new FileReader();
-    reader.onload = ev => alert("Import logic can map this JSON back if needed.");
-    reader.readAsText(e.target.files[0]);
+    downloadJSON(output);
 }
 
 function downloadJSON(data) {
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)]));
+    a.href = URL.createObjectURL(
+        new Blob([JSON.stringify(data, null, 2)], { type: "application/json" })
+    );
     a.download = "store_config.json";
     a.click();
 }

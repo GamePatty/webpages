@@ -9,9 +9,9 @@
 <body>
 
 <header class="topbar">
-    <div class="title">
+    <div>
         <h1>🛒 Store Config Editor</h1>
-        <span>Items • Bundles • Offers</span>
+        <small>Bundles • Items • Offers</small>
     </div>
 
     <div class="toolbar">
@@ -20,6 +20,11 @@
             <input type="file" id="importInput" accept=".json" hidden>
         </label>
         <button id="exportBtn" class="success">📤 Export JSON</button>
+		
+        <button id="collapseAllBtn" class="secondary">Collapse All▾</button>
+		
+        <button id="expandAllBtn" class="secondary">Expand All ▴</button>
+        <button id="themeToggle" class="secondary">Dark Mode 🌙</button>
     </div>
 </header>
 
@@ -27,15 +32,23 @@
 
 <section class="panel">
     <div class="panel-header">
-        <h2>Products</h2>
-        <button id="addProductBtn" class="primary">➕ Add Product</button>
+        <h2>🟣 Bundles</h2>
+        <button id="addBundleBtn" class="primary">➕ Add Bundle</button>
     </div>
-    <div id="products" class="stack"></div>
+    <div id="bundles" class="stack"></div>
 </section>
 
 <section class="panel">
     <div class="panel-header">
-        <h2>Offers</h2>
+        <h2>🔵 Items</h2>
+        <button id="addItemBtn" class="primary">➕ Add Item</button>
+    </div>
+    <div id="items" class="stack"></div>
+</section>
+
+<section class="panel">
+    <div class="panel-header">
+        <h2>🟠 Offers</h2>
         <button id="addOfferBtn" class="primary">➕ Add Offer</button>
     </div>
     <div id="offers" class="stack"></div>
@@ -43,9 +56,7 @@
 
 </main>
 
-<footer>
-    Internal Tool • GamePatty
-</footer>
+<footer>Internal Tool • GamePatty</footer>
 
 <script src="app.js"></script>
 </body>
