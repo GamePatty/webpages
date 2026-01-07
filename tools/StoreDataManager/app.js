@@ -15,6 +15,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.getElementById("exportBtn").onclick = exportJSON;
     importInput.onchange = importJSON;
+	
+	document.getElementById("copyJsonBtn").onclick = copyJSONToClipboard;
+	document.getElementById("pasteJsonBtn").onclick = pasteJSONFromClipboard;
 
     document.getElementById("collapseAllBtn").onclick =
         () => document.querySelectorAll(".card").forEach(c => c.classList.add("collapsed"));
@@ -279,31 +282,37 @@ document.addEventListener("DOMContentLoaded", function () {
     /* =========================================================
        IMPORT
     ========================================================= */
+	
+function loadFromJSON(json) {
+    bundlesDiv.innerHTML = "";
+    itemsDiv.innerHTML = "";
+    offersDiv.innerHTML = "";
 
-    function importJSON(e) {
-        const file = e.target.files[0];
-        if (!file) return;
+    Object.values(json.items || {}).forEach(p => addProduct("Item", p));
+    Object.values(json.bundles || {}).forEach(p => addProduct("Bundle", p));
+    Object.values(json.offers || {}).forEach(o => addOffer(o));
+}
 
-        const reader = new FileReader();
-        reader.onload = () => {
-            const json = JSON.parse(reader.result);
+function importJSON(e) {
+    const file = e.target.files[0];
+    if (!file) return;
 
-            bundlesDiv.innerHTML = "";
-            itemsDiv.innerHTML   = "";
-            offersDiv.innerHTML  = "";
+    const reader = new FileReader();
+    reader.onload = () => {
+        const json = JSON.parse(reader.result);
+        loadFromJSON(json);
+    };
+    reader.readAsText(file);
+}
 
-            Object.values(json.items || {}).forEach(p => addProduct("Item", p));
-            Object.values(json.bundles || {}).forEach(p => addProduct("Bundle", p));
-            Object.values(json.offers || {}).forEach(o => addOffer(o));
-        };
-        reader.readAsText(file);
-    }
 
     /* =========================================================
        EXPORT
     ========================================================= */
 
-    function exportJSON() {
+function buildExportJSON() {
+
+    // but return `out` instead of downloading
         const out = { items:{}, bundles:{}, offers:{} };
 
         document.querySelectorAll(".product.card").forEach(card => {
@@ -369,6 +378,44 @@ document.addEventListener("DOMContentLoaded", function () {
         a.href = URL.createObjectURL(blob);
         a.download = "store_config.json";
         a.click();
+		
+	    return out;	
     }
+
+function exportJSON() {
+    const out = buildExportJSON();
+    downloadJSON(out);
+}
+
+
+function copyJSONToClipboard() {
+    const data = buildExportJSON(); // reuse same structure as Export
+    const text = JSON.stringify(data, null, 2);
+
+    navigator.clipboard.writeText(text)
+        .then(() => alert("JSON copied to clipboard"))
+        .catch(() => alert("Clipboard access failed"));
+}
+
+async function pasteJSONFromClipboard() {
+    try {
+        const text = await navigator.clipboard.readText();
+        const json = JSON.parse(text);
+
+        if (
+            typeof json !== "object" ||
+            (!json.items && !json.bundles && !json.offers)
+        ) {
+            alert("Clipboard does not contain valid store JSON");
+            return;
+        }
+
+        loadFromJSON(json); // reuse import logic
+        alert("JSON loaded from clipboard");
+    } catch (e) {
+        alert("Invalid JSON in clipboard");
+    }
+}
+
 
 });

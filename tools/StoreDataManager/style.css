@@ -41,6 +41,13 @@ body {
     justify-content:space-between;
     align-items:center;
 }
+.toolbar-sep {
+    width: 1px;
+    height: 24px;
+    background: #ccc;
+    margin: 0 6px;
+}
+
 
 /* ---------- Layout ---------- */
 

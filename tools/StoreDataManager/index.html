@@ -14,18 +14,29 @@
         <small>Bundles • Items • Offers</small>
     </div>
 
-    <div class="toolbar">
-        <label class="secondary">
-            📥 Import JSON
-            <input type="file" id="importInput" accept=".json" hidden>
-        </label>
-        <button id="exportBtn" class="success">📤 Export JSON</button>
-		
-        <button id="collapseAllBtn" class="secondary">Collapse All▾</button>
-		
-        <button id="expandAllBtn" class="secondary">Expand All ▴</button>
-        <button id="themeToggle" class="secondary">Dark Mode 🌙</button>
-    </div>
+<div class="toolbar">
+    <label class="secondary">
+        📥 Import JSON
+        <input type="file" id="importInput" accept=".json" hidden>
+    </label>
+  <span class="toolbar-sep"></span>
+    <button id="exportBtn" class="success">📤 Export JSON</button>
+
+    <span class="toolbar-sep"></span>
+
+    <button id="copyJsonBtn" class="secondary">📋 Copy JSON</button>
+    <button id="pasteJsonBtn" class="secondary">📥 Paste JSON</button>
+
+    <span class="toolbar-sep"></span>
+
+    <button id="collapseAllBtn" class="secondary">Collapse All ▾</button>
+    <button id="expandAllBtn" class="secondary">Expand All ▴</button>
+
+    <span class="toolbar-sep"></span>
+
+    <button id="themeToggle" class="secondary">Dark Mode 🌙</button>
+</div>
+
 </header>
 
 <main>
